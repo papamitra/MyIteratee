@@ -8,7 +8,7 @@ object MyIteratee{
   }
   
   def step(state:Int)(in:Input[Int]):Int = in match{
-    case Input.El(e) => state + e
+    case Input.El(e) => {println(e); state + e}
   } 
 }
 
