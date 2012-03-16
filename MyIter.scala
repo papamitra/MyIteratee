@@ -6,10 +6,10 @@ object MyIteratee{
   object Input {
     case class El[E](e: E) extends Input[E]
   }
-  
-  def step(state:Int)(in:Input[Int]):Int = in match{
-    case Input.El(e) => {println(e); state + e}
-  } 
+
+  trait Iteratee[E, A] {
+    def invoke(in:Input[E]): Iteratee[E,A]
+  }
 }
 
 object Main extends App{
@@ -17,5 +17,19 @@ object Main extends App{
 
   val l = List(1,2,3).map(Input.El(_))
 
-  l.foldLeft(0)((res, e) => step(res)(e))
+  val it:Iteratee[Int,Int] = new Iteratee[Int,Int]{
+    def step(state:Int)(in:Input[Int]):Iteratee[Int,Int] = in match{
+      case Input.El(e) => {println(e);
+			   new Iteratee[Int, Int]{
+			     def invoke(in:Input[Int]):Iteratee[Int,Int] = 
+			       step(state + e)(in)
+			   }
+			 }
+    }
+
+    def invoke(in:Input[Int]):Iteratee[Int,Int] = 
+      step(0)(in)
+  }
+    
+  l.foldLeft(it)((res, e) => res.invoke(e))
 }
