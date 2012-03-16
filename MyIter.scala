@@ -17,5 +17,5 @@ object Main extends App{
 
   val l = List(1,2,3).map(Input.El(_))
 
-  println(l.foldLeft(0)((res, e) => step(res)(e)))
+  l.foldLeft(0)((res, e) => step(res)(e))
 }
